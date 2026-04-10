@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HealthVault AI - Decentralized Patient Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#2a6578",
+                        "primary-fixed": "#d6ef33",
+                        "on-primary-fixed-variant": "#424b00",
+                        "tertiary-fixed": "#b6eaff",
+                        "secondary-fixed": "#a8efee",
+                        "on-surface": "#1c1c18",
+                        "surface-tint": "#586400",
+                        "background": "#fcf9f2",
+                        "surface-container": "#f1eee7",
+                        "on-primary-fixed": "#191e00",
+                        "on-primary-container": "#5d6900",
+                        "on-background": "#1c1c18",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#b0e9ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ebe8e1",
+                        "primary": "#586400",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e5e2db",
+                        "secondary-container": "#a8efee",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#31312c",
+                        "on-secondary-container": "#246f6f",
+                        "on-error-container": "#93000a",
+                        "secondary": "#1b6968",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f6f3ec",
+                        "inverse-on-surface": "#f3f0e9",
+                        "on-secondary-fixed": "#002020",
+                        "on-tertiary-fixed": "#001f28",
+                        "primary-fixed-dim": "#bad205",
+                        "surface-variant": "#e5e2db",
+                        "on-surface-variant": "#464834",
+                        "tertiary-fixed-dim": "#96cfe4",
+                        "primary-container": "#d4ed31",
+                        "on-secondary-fixed-variant": "#004f4f",
+                        "outline": "#777962",
+                        "surface-dim": "#dcdad3",
+                        "on-tertiary-container": "#306a7d",
+                        "on-tertiary-fixed-variant": "#054d60",
+                        "inverse-primary": "#bad205",
+                        "surface-bright": "#fcf9f2",
+                        "secondary-fixed-dim": "#8dd3d2",
+                        "outline-variant": "#c7c9ae",
+                        "error": "#ba1a1a",
+                        "surface": "#fcf9f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fcf9f2; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+        .glass-panel {
+            background: rgba(252, 249, 242, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#fcf9f2] dark:bg-stone-950/70 backdrop-blur-md shadow-[0px_10px_30px_rgba(28,28,24,0.05)]">
+<div class="flex justify-between items-center px-8 h-20 w-full max-w-7xl mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold text-[#1b6968] dark:text-teal-500 font-headline tracking-tight">HealthVault AI</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#586400] dark:text-[#d4ed31] border-b-2 border-[#d4ed31] pb-1 font-headline tracking-tight font-semibold" href="#">Dashboard</a>
+<a class="text-[#1b6968] dark:text-stone-400 font-medium hover:text-[#586400] transition-colors font-headline tracking-tight font-semibold" href="#">Family Vault</a>
+<a class="text-[#1b6968] dark:text-stone-400 font-medium hover:text-[#586400] transition-colors font-headline tracking-tight font-semibold" href="#">Help</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-secondary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-secondary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-secondary-container overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Close-up portrait of a professional woman with a friendly expression in a brightly lit modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKY5nTcDc6lRTalmkLjWFZ2D26EV47IvdG6UTsWsoasuPAFCpnfhMGt-1fxyqAwZqLvMgn9UZjtAxZ7DXMvAquv2se5bkdMLiTpFcdGSoguAyqFgKlZ42c27p0sX4u5DgT_FawxNzXlSCeBNDQzpwDDrfUX-5WS87G6mF3JhDqS5o6uUu7V1Y4zHEjVqi2LFvRHFq5yfVCVOUZc66JjL1ARAFR4F71m9TetHPDt4RtCFK1OehA7AwY6heAWLYkbE4xh9tK9a2MKf4J"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-28 pb-12 px-6 max-w-7xl mx-auto min-h-screen">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Left Column: Patient Profile & Health Score -->
+<div class="md:col-span-3 flex flex-col gap-8">
+<!-- Patient Profile Card -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_10px_30px_rgba(28,28,24,0.05)] transition-transform hover:scale-[1.01] duration-300">
+<div class="flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full bg-surface-container p-1 ring-2 ring-primary/10 mb-4">
+<img alt="Amara Singh" class="w-full h-full object-cover rounded-full" data-alt="Portrait of a young woman with dark hair and warm eyes, soft natural lighting, editorial photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCugyX0v4Q3iIpNHPMgWPjJYu0k9EHek9CYQtaI_0wnw2MRwtAPgTwAnc_SAZjsoRwZralo0Dl6J9VlqOZdI-FmFxGDmxwsdqcS8YmBVwru5W18mTJvM1U_6SpLC-0oS5h8xfgb3rp3TKbjyEar8C7RjGnI1OwN-ut8ApxzQmzZcbYN9ZxUV60LzVIAO5H-HUCPzGnWGI22Sg0fGUKLOS5NitHUBWjs8wa8JHfAaQXypH71z5b1eR-gCHr7imcEaXN7aZHRX_5VZagV"/>
+</div>
+<h2 class="text-xl font-bold font-headline text-secondary tracking-tight">Amara Singh</h2>
+<span class="text-xs font-bold uppercase tracking-widest text-primary mt-1 mb-6">Patient ID: #HV-9921-X</span>
+<div class="grid grid-cols-2 gap-4 w-full">
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="text-[10px] uppercase tracking-tighter text-outline font-bold">Blood Group</p>
+<p class="text-lg font-bold text-secondary">O Positive</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg">
+<p class="text-[10px] uppercase tracking-tighter text-outline font-bold">Age</p>
+<p class="text-lg font-bold text-secondary">28 Years</p>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Health Trust Score -->
+<div class="bg-primary-container p-6 rounded-xl shadow-[0px_10px_30px_rgba(88,100,0,0.15)] relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="relative z-10">
+<p class="text-on-primary-container font-headline font-bold text-sm tracking-tight opacity-80 uppercase">AI Health Trust Score</p>
+<div class="flex items-baseline gap-2 mt-2">
+<span class="text-5xl font-extrabold font-headline text-on-primary-container">850</span>
+<span class="text-on-primary-container font-bold opacity-60">/ 1000</span>
+</div>
+<p class="mt-4 text-on-primary-container font-semibold leading-snug">Excellent Health! You qualify for a 15% insurance discount.</p>
+<div class="flex gap-1 mt-4 text-on-primary-container">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+<!-- Multilingual Assistant Widget -->
+<div class="bg-secondary p-6 rounded-xl text-white shadow-[0px_10px_30px_rgba(27,105,104,0.1)]">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container text-sm">smart_toy</span>
+</div>
+<h3 class="font-headline font-bold">Health Assistant</h3>
+</div>
+<p class="text-xs text-white/70 mb-4">Ask anything about your health records in any language.</p>
+<div class="relative">
+<input class="w-full bg-white/10 border-none rounded-lg py-3 px-4 text-sm placeholder:text-white/40 focus:ring-2 focus:ring-primary-container transition-all" placeholder="Ask a question about your history" type="text"/>
+<button class="absolute right-2 top-1.5 p-1.5 text-primary-container">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Center Column: Insights & Lab Reports -->
+<div class="md:col-span-6 flex flex-col gap-8">
+<!-- Predictive Insights Bento Card -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0px_10px_30px_rgba(28,28,24,0.05)] border border-outline-variant/10">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h2 class="text-2xl font-bold font-headline text-secondary tracking-tight">Top AI Insights</h2>
+<p class="text-outline mt-1 font-medium">Real-time health telemetry analysis</p>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded-full">Updated 12m ago</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="mt-1 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-primary">trending_down</span>
+</div>
+<div>
+<h4 class="font-bold text-secondary">Blood Pressure Trend</h4>
+<p class="text-sm text-outline leading-relaxed">Stable improvement over last 3 months. Average systolic dropped by 4.2%.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="mt-1 w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-secondary">eco</span>
+</div>
+<div>
+<h4 class="font-bold text-secondary">Metabolic Efficiency</h4>
+<p class="text-sm text-outline leading-relaxed">AI predicts peak energy levels between 9 AM and 1 PM based on your glucose data.</p>
+</div>
+</div>
+</div>
+<!-- Stylized Donut Chart -->
+<div class="flex flex-col items-center justify-center relative py-4">
+<svg class="w-48 h-48 transform -rotate-90">
+<circle class="text-surface-container" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="14"></circle>
+<circle class="text-secondary" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502.6" stroke-dashoffset="80" stroke-linecap="round" stroke-width="14"></circle>
+<circle class="text-primary-container" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502.6" stroke-dashoffset="350" stroke-linecap="round" stroke-width="14"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-3xl font-extrabold font-headline text-secondary">88%</span>
+<span class="text-[10px] font-bold text-outline uppercase tracking-wider">Consistency</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Lab Reports -->
+<div class="bg-surface-container-lowest p-8 rounded-xl shadow-[0px_10px_30px_rgba(28,28,24,0.05)] border border-outline-variant/10">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold font-headline text-secondary tracking-tight">Recent Lab Reports</h2>
+<button class="text-primary font-bold text-sm hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Report Item -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary">description</span>
+</div>
+<div>
+<h4 class="font-bold text-secondary">Dr. Sharma Prescription <span class="ml-2 text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">AI Parsed</span></h4>
+<p class="text-xs text-outline">Uploaded Oct 12, 2023 • General Consultation</p>
+</div>
+</div>
+<button class="bg-white text-secondary px-4 py-2 rounded-lg text-sm font-bold shadow-sm border border-outline-variant/20 hover:scale-105 transition-transform">View Details</button>
+</div>
+<!-- Report Item -->
+<div class="flex items-center justify-between p-4 rounded-lg bg-surface-container-low group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary">lab_research</span>
+</div>
+<div>
+<h4 class="font-bold text-secondary">Apollo Blood Test <span class="ml-2 text-[10px] bg-secondary/20 text-secondary px-1.5 py-0.5 rounded">Verified</span></h4>
+<p class="text-xs text-outline">Uploaded Oct 08, 2023 • Complete Blood Count</p>
+</div>
+</div>
+<button class="bg-white text-secondary px-4 py-2 rounded-lg text-sm font-bold shadow-sm border border-outline-variant/20 hover:scale-105 transition-transform">View Details</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Action Widgets -->
+<div class="md:col-span-3 flex flex-col gap-8">
+<!-- Active Medical Access -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_10px_30px_rgba(28,28,24,0.05)] border border-outline-variant/10">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary text-xl">account_tree</span>
+<h3 class="font-headline font-bold text-secondary tracking-tight">Access Control</h3>
+</div>
+<p class="text-xs text-outline mb-6 leading-relaxed">Blockchain-based permissions for your decentralized records.</p>
+<div class="space-y-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img alt="Dr. Miller" class="w-full h-full object-cover" data-alt="Doctor in white coat looking professional and approachable, medical office background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjLT8yrBAPks2Yfqpi3DryUmPg3rpDf-CPD-bqCXf9W87ZgSOZsATIYnyu6kBVBtcj22BAUBskKOBsOIaV0ZGN__13H7TDwVXVPyoxgV9HtuZPCaoNqrcEC0UMEvqdcgTsItfRNHkQShHW01O9j1Nm4M9MGRRmnC6QYNd5X9AvlmWhskdYhQjcYgCTYc4vA8Z4vBAn2hYz-jxWMVLJScE2EszysA2IrM1noFojxxvZKOZDbY-j-Fwx-AWbrhLH94YcKfomykpEcLzb"/>
+</div>
+<span class="text-sm font-semibold text-secondary">Dr. Miller</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container">
+<img alt="Dr. Gupta" class="w-full h-full object-cover" data-alt="Female doctor with stethoscope in high-key professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH4_xNY4bwYrVzELSdhVUCY3hv1LGYrBNK-P7AWxg_ME5CmzrbFDAsGs8KnoHr-W7wOeQP1JZgEf1BonSqbTVIoDua5tFG42givZY2uNWewTd7SJEIC-zPMTLJ3psi66fzH8jSSA05NNxyuu22xyELDHtrdEQxBtDwdlLU0iXJOOtSEF_h8gOXxpH8w2aBpCET9d0vHzBf9006x1eYIE8KFOykxfynPjg6iG4aiWZ9sn37iUm55dwqYP3ANFYRP6OCWTDlyZUw_Hfk"/>
+</div>
+<span class="text-sm font-semibold text-secondary">Dr. Gupta</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-outline-variant/10">
+<div class="flex items-center justify-between text-xs font-bold text-secondary opacity-60">
+<span>TOTAL NODES</span>
+<span>14 ACTIVE</span>
+</div>
+</div>
+</div>
+<!-- Emergency QR Code CTA -->
+<button class="group w-full bg-primary-container p-8 rounded-xl shadow-[0px_10px_30px_rgba(88,100,0,0.1)] flex flex-col items-center justify-center text-center hover:scale-[1.02] transition-transform duration-300">
+<div class="w-20 h-20 bg-white rounded-xl mb-6 flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
+<span class="material-symbols-outlined text-secondary text-5xl">qr_code_2</span>
+</div>
+<span class="text-on-primary-container font-headline font-extrabold text-lg leading-tight">Generate Emergency QR Code</span>
+<p class="text-on-primary-container/70 text-xs mt-3 font-medium">Instant access to critical history for paramedics</p>
+</button>
+<!-- Status Card -->
+<div class="bg-white/50 border border-outline-variant/30 p-4 rounded-lg flex items-center gap-4">
+<div class="w-2 h-2 rounded-full bg-[#bad205] shadow-[0_0_8px_#bad205]"></div>
+<span class="text-[10px] font-bold text-secondary uppercase tracking-[0.2em]">Block: #8821901 Secured</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation for Mobile -->
+<footer class="md:hidden fixed bottom-0 left-0 w-full bg-surface-bright/80 backdrop-blur-lg border-t-0 shadow-[0px_-10px_30px_rgba(28,28,24,0.05)] z-50">
+<div class="flex justify-around items-center h-16">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[10px] font-bold">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-secondary opacity-50">
+<span class="material-symbols-outlined">family_restroom</span>
+<span class="text-[10px] font-bold">Vault</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-secondary opacity-50">
+<span class="material-symbols-outlined">shield</span>
+<span class="text-[10px] font-bold">Privacy</span>
+</button>
+</div>
+</footer>
+</body></html>

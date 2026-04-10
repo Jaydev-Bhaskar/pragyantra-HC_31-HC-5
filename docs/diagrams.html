@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Deck Diagrams</title>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f4f6f8; color: #333; }
+        .diagram-container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); margin-bottom: 50px; }
+        h1 { text-align: center; margin-bottom: 10px; color: #111; }
+        p.desc { text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1em; }
+        h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 30px; }
+        .mermaid { display: flex; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <h1>HealthVault AI - Pitch Deck Diagrams (Updated)</h1>
+    <p class="desc">Includes new features: Document AI-OCR, Aadhaar-OTP, Doctor Connect (DR-XXXX), and Health Trust Score.</p>
+
+    <div class="diagram-container">
+        <h2>1. Proposed Solution Architecture (Slide 3)</h2>
+        <div class="mermaid">
+graph LR
+    subgraph Interfaces
+        A["Patient React Web App"]
+        B["Doctor Dashboard"]
+    end
+    subgraph Core
+        C(("Node.js / Express Server"))
+    end
+    subgraph Intelligence_and_Storage
+        D["Gemini 2.0 Flash API<br>(OCR & Chat)"]
+        E[("MongoDB Atlas<br>(Secure DB)")]
+    end
+
+    A <-->|"Aadhaar OTP / JWT"| C
+    B <-->|"Access via DR-Code"| C
+    C <-->|"Prompt & Image Data"| D
+    C <-->|"Encrypted Records & Logs"| E
+        </div>
+    </div>
+
+    <div class="diagram-container">
+        <h2>2. Technical Approach / Tech Stack (Slide 4)</h2>
+        <div class="mermaid">
+graph TD
+    classDef frontend fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px;
+    classDef backend fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+    classDef db fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef ai fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px;
+
+    UI["💻 React.js (Vite) + Recharts"]:::frontend
+    API["⚙️ Node.js + Express.js"]:::backend
+    ML["🧠 Google Gemini SDK (Vision & LLM)"]:::ai
+    DB[("🗄️ MongoDB Atlas (Mongoose)")]:::db
+
+    subgraph FrontEnd_UI
+        UI
+    end
+    subgraph BackEnd_Server
+        API
+    end
+    subgraph AI_Intelligence
+        ML
+    end
+    subgraph Database
+        DB
+    end
+
+    UI -->|"REST API / Multer"| API
+    API -->|"Base64 Images & Context Prompts"| ML
+    ML -->|"Structured JSON (Medicines/Metrics)"| API
+    API <-->|"Store & Retrieve"| DB
+        </div>
+    </div>
+
+</body>
+</html>

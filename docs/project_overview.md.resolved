@@ -1,0 +1,76 @@
+# HealthVault AI - Complete Project Overview
+
+## Screenshots
+
+### Login Page
+![Login Page](C:/Users/jdbha/.gemini/antigravity/brain/b51e9739-7e9f-42aa-8960-f3c37e789ac4/login_page_1775791442178.png)
+
+### Dashboard
+![Dashboard](C:/Users/jdbha/.gemini/antigravity/brain/b51e9739-7e9f-42aa-8960-f3c37e789ac4/dashboard_final_v2_1775791510686.png)
+
+---
+
+## Project Structure
+
+```
+pragyatra/
+├── frontend/          (React + Vite)
+│   └── src/
+│       ├── components/   Navbar
+│       ├── context/      AuthContext
+│       ├── pages/        Login, Register, Dashboard, Records, FamilyVault, AccessControl
+│       └── utils/        API client, Demo data
+├── backend/           (Node.js + Express + MongoDB)
+│   ├── models/        User, HealthRecord, AccessPermission
+│   ├── routes/        auth, records, access
+│   ├── middleware/    JWT auth
+│   └── config/        MongoDB connection
+├── diagrams.html      (Mermaid architecture diagrams)
+└── pitch_deck_visuals.md (Slide-by-slide PPT content)
+```
+
+## Features Built
+
+| Feature | Status | Page |
+|---------|--------|------|
+| Login / Register (Aadhaar/OTP style) | ✅ Working | `/login`, `/register` |
+| Patient Dashboard with Profile | ✅ Working | `/dashboard` |
+| AI Health Trust Score (850/1000) | ✅ Working | `/dashboard` |
+| Health Trend Charts (BP, Sugar, Cholesterol) | ✅ Working | `/dashboard` |
+| AI Insights (Predictive alerts) | ✅ Working | `/dashboard` |
+| Multilingual AI Chat Assistant | ✅ Working | `/dashboard` |
+| Health Vault (Records with AI Parsing) | ✅ Working | `/records` |
+| Prescription OCR Upload | ✅ Working | `/records` |
+| Family Vault (Dependents) | ✅ Working | `/family` |
+| Blockchain Access Control | ✅ Working | `/access` |
+| Emergency QR Code Generation | ✅ Working | `/access` |
+| Outbreak Alerts | ✅ Working | `/dashboard` |
+| Demo Mode (No backend needed) | ✅ Working | All pages |
+
+## How to Run
+
+### Frontend Only (Demo Mode)
+```bash
+cd frontend
+npm run dev
+# Open http://localhost:5173
+# Click "Quick Demo Login" to explore
+```
+
+### Full Stack (with MongoDB)
+```bash
+# Terminal 1 - Backend
+cd backend
+npm run dev
+
+# Terminal 2 - Frontend
+cd frontend
+npm run dev
+```
+
+## Design System
+- **Background:** Soft off-white (#F4F1EA)
+- **Cards:** Pure white with soft shadows
+- **Primary Accent:** Neon lime-green (#D4ED31)
+- **Secondary:** Deep teal (#1B6968)
+- **Typography:** Manrope (headlines) + Inter (body)
