@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { demoRecords, demoInsights, demoHealthTrends, demoPermissions, isDemoUser } from '../utils/demoData';
 import API from '../utils/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { FiActivity, FiShield, FiUpload, FiMessageCircle, FiStar, FiAlertTriangle, FiCheckCircle, FiInfo, FiSend, FiRefreshCw } from 'react-icons/fi';
+import { FiActivity, FiShield, FiUpload, FiMessageCircle, FiStar, FiAlertTriangle, FiCheckCircle, FiInfo, FiSend, FiRefreshCw, FiMic, FiMicOff } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -21,8 +21,52 @@ const Dashboard = () => {
   const [healthTrends, setHealthTrends] = useState(isDemo ? demoHealthTrends : []);
   const [activeMedCount, setActiveMedCount] = useState(0);
   const [chatMessages, setChatMessages] = useState([
-    { role: 'assistant', text: 'Hello! I\'m your AI Health Assistant powered by Gemini. Ask me anything about your health in English, Hindi, or Marathi! Try: "Mera BP kaisa hai?" or "What medicines am I taking?"' }
+    { role: 'assistant', text: 'Hello! I am your HealthVault Medical Assistant. I am here to provide professional clinical guidance based on your health records. How may I assist you with your health data today?' }
   ]);
+  const [isListening, setIsListening] = useState(false);
+  const [selectedLang, setSelectedLang] = useState('en-US');
+  const [recognition, setRecognition] = useState(null);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const rec = new SpeechRecognition();
+      rec.continuous = false;
+      rec.interimResults = false;
+      
+      rec.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setChatInput(transcript);
+        setIsListening(false);
+      };
+
+      rec.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      rec.onend = () => {
+        setIsListening(false);
+      };
+
+      setRecognition(rec);
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (isListening) {
+      recognition.stop();
+      setIsListening(false);
+    } else {
+      if (recognition) {
+        recognition.lang = selectedLang;
+        recognition.start();
+        setIsListening(true);
+      } else {
+        alert('Speech recognition is not supported in this browser.');
+      }
+    }
+  };
 
   // Fetch real data for non-demo users
   useEffect(() => {
@@ -100,15 +144,17 @@ const Dashboard = () => {
 
   const getOfflineResponse = (input) => {
     const lower = input.toLowerCase();
+    if (lower.includes('डोकं') || lower.includes('headache') || lower.includes('pain'))
+      return '🩺 वैद्यकीय सल्ला (Medical Advice):\n- **Assessment**: तुमच्या डोकेदुखीची तक्रार मी नोंदवली आहे.\n- **Actionable Advice**: थोडा वेळ शांत जागी विश्रांती घ्या आणि भरपूर पाणी प्या.\n- **Medication Suggestion**: तात्काळ आरामासाठी तुम्ही **Paracetamol 650mg** (डोकेदुखीसाठी) घेऊ शकता.\n- **Safety Protocol**: जर त्रास २४ तासांपेक्षा जास्त वेळ राहिला किंवा लक्षणे वाढली, तर कृपया त्वरित जवळच्या दवाखान्यात किंवा फॅमिली डॉक्टरशी संपर्क साधा.';
     if (lower.includes('bp') || lower.includes('blood pressure'))
-      return '📊 Your BP trend: 128/84 → 118/77 mmHg over 6 months. Consistently in the healthy range!';
+      return '🩺 CLINICAL OBSERVATION: Your systolic/diastolic trends indicate a healthy cardiovascular profile (128/84 → 118/77 mmHg). This is within the optimal range. Please continue your current lifestyle regimen.';
     if (lower.includes('sugar') || lower.includes('diabetes'))
-      return '🩸 Fasting Blood Sugar: 96-105 mg/dL (last 6 months). Normal range. Consider reducing refined carbs.';
+      return '🧪 METABOLIC INSIGHT: Your Fasting Blood Sugar levels (96-105 mg/dL) are stable. To maintain this, I recommend monitoring glycemic index in your diet. Would you like a detailed nutrition chart?';
     if (lower.includes('medicine') || lower.includes('medication') || lower.includes('dawa'))
-      return '💊 Current: Montelukast 10mg (daily). 95% adherence this month. Go to Medicine Manager for details.';
+      return '💊 PHARMACEUTICAL OVERVIEW: You are currently prescribed Montelukast 10mg. Adherence is at 95%. It is critical to complete the full course. Please refer to the Medication Portal for dosage timings.';
     if (lower.includes('hindi') || lower.includes('namaste') || lower.includes('mera') || lower.includes('kaise'))
-      return '🌐 Namaste! Aapka health score 850/1000 hai - bahut accha! Aapka BP normal hai aur medicines time pe le rahe ho. Koi specific sawal ho toh puchiye! 😊';
-    return '🤖 Your health metrics are in normal range. Health Score: 850/1000. Ask me about specific metrics, medications, or try asking in Hindi!';
+      return '🌐 नमस्ते! मैं आपका हेल्थवॉल्ट मेडिकल असिस्टेंट हूँ। आपका हेल्थ स्कोर 850/1000 है, जो उत्कृष्ट है। आपकी दवाएं और रिपोर्ट्स सही स्थिति में हैं। क्या आप किसी विशेष रिपोर्ट के बारे में जानना चाहते हैं?';
+    return '📋 ASSISTANT NOTE: I have analyzed your profile. Your Health Trust Score is currently 850/1000. I can provide detailed breakdowns of your lab reports, verify medication interactions, or offer preventive advice. How can I help?';
   };
 
   // AI Full Analysis
@@ -166,26 +212,11 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="card score-card">
-            <div className="score-header"><FiActivity size={20} /><h4>AI Health Trust Score</h4></div>
-            <div className="score-display pulse">
-              <span className="score-number" style={{ color: getScoreColor(healthScore) }}>{healthScore}</span>
-              <span className="score-max">/1000</span>
-            </div>
-            <span className="chip chip-success">{scoreLabel}</span>
-            <p className="score-desc">You qualify for a <strong>{healthScore >= 800 ? '15%' : healthScore >= 600 ? '8%' : '3%'} insurance premium discount!</strong></p>
-            <div className="score-stars">
-              {[1,2,3,4,5].map(i => (
-                <FiStar key={i} fill={i <= getScoreStars(healthScore) ? '#D4ED31' : 'none'} color="#D4ED31" size={20} />
-              ))}
-            </div>
-          </div>
-
           {/* AI Chat */}
           <div className="card chat-card">
             <div className="chat-header">
-              <FiMessageCircle size={18} /><h4>AI Health Assistant</h4>
-              <span className="chip">Gemini AI</span>
+              <FiMessageCircle size={18} /><h4>Medical Assistant</h4>
+              <span className="chip">Clinical AI</span>
             </div>
             <div className="chat-messages">
               {chatMessages.map((msg, i) => (
@@ -193,8 +224,34 @@ const Dashboard = () => {
               ))}
               {chatLoading && <div className="chat-msg assistant typing">🤔 Thinking...</div>}
             </div>
+            <div className="chat-controls">
+              <select 
+                className="lang-select" 
+                value={selectedLang} 
+                onChange={(e) => setSelectedLang(e.target.value)}
+              >
+                <option value="en-US">English</option>
+                <option value="hi-IN">हिन्दी (Hindi)</option>
+                <option value="mr-IN">मराठी (Marathi)</option>
+              </select>
+            </div>
             <form className="chat-input-form" onSubmit={handleChat}>
-              <input value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask in English, Hindi, Marathi..." disabled={chatLoading} />
+              <div className="chat-input-wrapper">
+                <input 
+                  value={chatInput} 
+                  onChange={(e) => setChatInput(e.target.value)} 
+                  placeholder={isListening ? "Listening..." : "Ask in English, Hindi, Marathi..."} 
+                  disabled={chatLoading} 
+                />
+                <button 
+                  type="button" 
+                  className={`mic-btn ${isListening ? 'listening' : ''}`} 
+                  onClick={toggleListening}
+                  title="Voice Input"
+                >
+                  {isListening ? <FiMicOff /> : <FiMic />}
+                </button>
+              </div>
               <button type="submit" className="chat-send" disabled={chatLoading}><FiSend /></button>
             </form>
           </div>
