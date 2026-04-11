@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
 import { FiExternalLink, FiCamera } from 'react-icons/fi';
 import jsQR from 'jsqr';
+import DoctorSimulation from './DoctorSimulation';
 import './Pages.css';
 
 const DoctorDashboard = () => {
@@ -250,9 +251,9 @@ const DoctorDashboard = () => {
 
             {/* Tabs */}
             <div className="filter-bar" style={{ marginBottom: 16 }}>
-              {['records', 'medicines', 'addNote'].map(t => (
+              {['records', 'medicines', 'simulation', 'addNote'].map(t => (
                 <button key={t} className={`filter-chip ${activeTab === t ? 'active' : ''}`} onClick={() => setActiveTab(t)}>
-                  {t === 'records' ? '📄 Records' : t === 'medicines' ? '💊 Medicines' : '📝 Add Note'}
+                  {t === 'records' ? '📄 Records' : t === 'medicines' ? '💊 Medicines' : t === 'simulation' ? '🕒 Health Simulator' : '📝 Add Note'}
                 </button>
               ))}
             </div>
@@ -283,10 +284,10 @@ const DoctorDashboard = () => {
                     </p>
                     {r.fileUrl && (
                       <div style={{ marginTop: 12 }}>
-                        <a 
-                          href={r.fileUrl.startsWith('http') ? r.fileUrl : `http://localhost:5000${r.fileUrl}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          href={r.fileUrl.startsWith('http') ? r.fileUrl : `http://localhost:5000${r.fileUrl}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="btn-outline"
                           style={{ fontSize: '0.75rem', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: 6 }}
                         >
@@ -301,6 +302,29 @@ const DoctorDashboard = () => {
                             {m.name}: {m.value} {m.unit} ({m.status})
                           </div>
                         ))}
+                      </div>
+                    )}
+                    {r.aiParsedData?.diagnosis && (
+                      <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(52, 120, 246, 0.05)', borderRadius: 8, borderLeft: '4px solid #1565c0' }}>
+                        <p style={{ margin: 0, fontSize: '0.8rem', fontWeight: 700, color: '#1565c0' }}>Diagnosis</p>
+                        <p style={{ margin: '4px 0 0', fontSize: '0.9rem' }}>{r.aiParsedData.diagnosis}</p>
+                      </div>
+                    )}
+                    {r.aiParsedData?.medicines?.length > 0 && (
+                      <div style={{ marginTop: 12 }}>
+                        <p style={{ margin: '0 0 4px', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Prescribed Medicines</p>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                          {r.aiParsedData.medicines.map((m, i) => (
+                            <div key={i} className="chip" style={{ fontSize: '0.75rem', background: '#fff9c4' }}>
+                              💊 {m.name} ({m.dosage}) - {m.frequency}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {r.aiParsedData?.summary && r.source === 'ai_ocr' && (
+                      <div style={{ marginTop: 12, fontSize: '0.85rem', fontStyle: 'italic', borderTop: '1px solid var(--outline)', paddingTop: 8 }}>
+                        <p style={{ margin: 0 }}><strong>AI Summary:</strong> {r.aiParsedData.summary}</p>
                       </div>
                     )}
                   </div>
@@ -335,7 +359,7 @@ const DoctorDashboard = () => {
                                   const match = m.notes.match(/(\d+)\s*days?/i);
                                   if (match) daysCount = parseInt(match[1]);
                                 }
-                                
+
                                 const trackDays = [];
                                 for (let i = daysCount - 1; i >= 0; i--) {
                                   const d = new Date();
@@ -350,10 +374,10 @@ const DoctorDashboard = () => {
                                       {trackDays.map(dateStr => {
                                         const wasTaken = (m.adherenceLog || []).some(log => log.date && log.date.substring(0, 10) === dateStr && log.taken);
                                         return (
-                                          <div 
+                                          <div
                                             key={dateStr} title={dateStr}
                                             style={{
-                                              flex: daysCount > 10 ? '0 0 calc(20% - 3px)' : 1, 
+                                              flex: daysCount > 10 ? '0 0 calc(20% - 3px)' : 1,
                                               height: '8px', borderRadius: '3px',
                                               background: wasTaken ? '#4caf50' : '#e0e0e0',
                                               marginBottom: daysCount > 10 ? '3px' : 0
@@ -373,6 +397,14 @@ const DoctorDashboard = () => {
                   </div>
                 )}
               </div>
+            )}
+
+            {/* Simulation Tab */}
+            {activeTab === 'simulation' && (
+              <DoctorSimulation
+                patientId={selectedPatient.patient._id}
+                patientName={selectedPatient.patient.name}
+              />
             )}
 
             {/* Add Note Tab */}
