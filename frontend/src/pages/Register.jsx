@@ -49,9 +49,10 @@ const Register = () => {
 
   if (successInfo) {
     return (
-      <div className="auth-page">
-        <div className="auth-right" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <div className="auth-card card" style={{ textAlign: 'center', maxWidth: 480 }}>
+      <div className="auth-page centered">
+
+        <div className="auth-card card" style={{ textAlign: 'center', maxWidth: 480 }}>
+
             <h2 style={{ fontSize: '2rem', marginBottom: 8 }}>🎉 Registration Successful!</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Welcome, {successInfo.name}</p>
             <div style={{ background: 'var(--surface-container-low)', borderRadius: 16, padding: 24, marginBottom: 16 }}>
@@ -67,29 +68,15 @@ const Register = () => {
             </p>
             <p style={{ marginTop: 16, fontSize: '0.85rem', opacity: 0.6 }}>Redirecting to dashboard in a few seconds...</p>
           </div>
-        </div>
       </div>
     );
   }
 
-  return (
-    <div className="auth-page">
-      <div className="auth-left">
-        <div className="auth-brand">
-          <span className="auth-logo">💚</span>
-          <h1>HealthVault AI</h1>
-          <p className="auth-tagline">Your Health. Your Data. Your Control.</p>
-        </div>
-        <div className="auth-features">
-          <div className="auth-feature"><span className="feature-icon">🆔</span><div><h4>Unique Health ID</h4><p>Auto-generated ID linked to your Aadhaar</p></div></div>
-          <div className="auth-feature"><span className="feature-icon">🧠</span><div><h4>AI Health Score</h4><p>Get a personalized 0-1000 health trust score</p></div></div>
-          <div className="auth-feature"><span className="feature-icon">👨‍⚕️</span><div><h4>Doctor Code</h4><p>Doctors get a unique DR-XXXX code for easy lookup</p></div></div>
-          <div className="auth-feature"><span className="feature-icon">🏥</span><div><h4>Lab Portal</h4><p>Hospitals get LAB-XXXX codes to upload reports</p></div></div>
-        </div>
-      </div>
 
-      <div className="auth-right">
-        <div className="auth-card card">
+  return (
+    <div className="auth-page centered">
+      <div className="auth-card card">
+
           <h2>Create Account</h2>
           <p className="auth-subtitle">Join HealthVault to take control of your health data</p>
 
@@ -187,10 +174,10 @@ const Register = () => {
             </button>
           </form>
           <p className="auth-switch">Already have an account? <Link to="/login">Sign In</Link></p>
-        </div>
       </div>
     </div>
   );
 };
+
 
 export default Register;
