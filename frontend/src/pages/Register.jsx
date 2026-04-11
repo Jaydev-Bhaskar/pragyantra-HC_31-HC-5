@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../utils/api';
+import { FiArrowLeft } from 'react-icons/fi';
 import './Auth.css';
 
 const Register = () => {
@@ -76,7 +77,9 @@ const Register = () => {
   return (
     <div className="auth-page centered">
       <div className="auth-card card">
-
+          <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', textDecoration: 'none', marginBottom: '16px', fontSize: '0.9rem', fontWeight: '500' }}>
+            <FiArrowLeft /> Back to Home
+          </Link>
           <h2>Create Account</h2>
           <p className="auth-subtitle">Join HealthVault to take control of your health data</p>
 

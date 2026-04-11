@@ -17,13 +17,7 @@ const Medicines = () => {
   const { user } = useAuth();
   const isDemo = isDemoUser(user);
   const [medicines, setMedicines] = useState(isDemo ? demoMedicines : []);
-  const [showForm, setShowForm] = useState(false);
-  const formRef = useRef(null);
   const [takenMap, setTakenMap] = useState({});
-  const [prescribedBy, setPrescribedBy] = useState('');
-  const [batchNotes, setBatchNotes] = useState('');
-  const [batchMeds, setBatchMeds] = useState([{ ...EMPTY_MED }, { ...EMPTY_MED }, { ...EMPTY_MED }]);
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isDemo) fetchMedicines();
@@ -38,11 +32,6 @@ const Medicines = () => {
     return () => window.removeEventListener('medicineTaken', handleMedicineTaken);
   }, [isDemo]);
 
-  useEffect(() => {
-    if (showForm && formRef.current) {
-      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [showForm]);
 
   const fetchMedicines = async () => {
     try {
@@ -51,42 +40,6 @@ const Medicines = () => {
     } catch { /* empty for new users */ }
   };
 
-  const addRow = () => setBatchMeds([...batchMeds, { ...EMPTY_MED }]);
-  const removeRow = (i) => setBatchMeds(batchMeds.filter((_, idx) => idx !== i));
-
-  const updateBatchMed = (index, field, value) => {
-    const updated = [...batchMeds];
-    updated[index] = { ...updated[index], [field]: value };
-    setBatchMeds(updated);
-  };
-
-  const handleBatchAdd = async (e) => {
-    e.preventDefault();
-    const validMeds = batchMeds.filter(m => m.name.trim() && m.dosage.trim());
-    if (validMeds.length === 0) return;
-
-    setSaving(true);
-    const payload = validMeds.map(m => ({
-      ...m,
-      prescribedBy,
-      notes: batchNotes
-    }));
-
-    try {
-      const { data } = await API.post('/medicines/batch', { medicines: payload });
-      setMedicines(prev => [...(data.medicines || []), ...prev]);
-    } catch {
-      // Fallback: add locally
-      const local = payload.map((m, i) => ({ _id: 'local_' + Date.now() + i, ...m, isActive: true, startDate: new Date().toISOString(), adherenceLog: [], sideEffects: [] }));
-      setMedicines(prev => [...local, ...prev]);
-    }
-
-    setBatchMeds([{ ...EMPTY_MED }, { ...EMPTY_MED }, { ...EMPTY_MED }]);
-    setPrescribedBy('');
-    setBatchNotes('');
-    setShowForm(false);
-    setSaving(false);
-  };
 
   const markTaken = async (medId, timing) => {
     const key = `${medId}_${timing}`;
@@ -126,7 +79,6 @@ const Medicines = () => {
           <h1>💊 Medicine Manager</h1>
           <p className="text-muted">Track your medications, never miss a dose</p>
         </div>
-        <button className="btn-primary" onClick={() => setShowForm(!showForm)}><FiPlus /> Add Medicines</button>
       </div>
 
       {/* Refill Alerts */}
@@ -173,83 +125,13 @@ const Medicines = () => {
         </div>
       )}
 
-      {/* BATCH Add Medicine Form */}
-      {showForm && (
-        <div ref={formRef} className="card" style={{ marginBottom: '24px' }}>
-          <h4 style={{ marginBottom: '4px' }}>Add Multiple Medicines at Once</h4>
-          <p className="text-muted" style={{ marginBottom: '16px', fontSize: '0.82rem' }}>Add all medicines from a prescription in one go</p>
-          <form onSubmit={handleBatchAdd}>
-            {/* Shared fields */}
-            <div className="form-row" style={{ marginBottom: '16px' }}>
-              <div className="form-group"><label>Prescribed By</label>
-                <input value={prescribedBy} onChange={e => setPrescribedBy(e.target.value)} placeholder="Doctor name or code" />
-              </div>
-              <div className="form-group"><label>Notes</label>
-                <input value={batchNotes} onChange={e => setBatchNotes(e.target.value)} placeholder="e.g., After food, for 7 days" />
-              </div>
-            </div>
-
-            {/* Medicine table */}
-            <table className="med-table" style={{ marginBottom: '12px' }}>
-              <thead>
-                <tr>
-                  <th style={{ width: '25%' }}>Medicine Name *</th>
-                  <th style={{ width: '15%' }}>Dosage *</th>
-                  <th style={{ width: '18%' }}>Frequency</th>
-                  <th style={{ width: '22%' }}>Timing</th>
-                  <th style={{ width: '10%' }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {batchMeds.map((med, i) => (
-                  <tr key={i}>
-                    <td><input id={`med-name-${i}`} value={med.name} onChange={e => updateBatchMed(i, 'name', e.target.value)} placeholder="e.g., Paracetamol" style={{ width: '100%', margin: 0 }} /></td>
-                    <td><input id={`med-dosage-${i}`} value={med.dosage} onChange={e => updateBatchMed(i, 'dosage', e.target.value)} placeholder="500mg" style={{ width: '100%', margin: 0 }} /></td>
-                    <td>
-                      <select id={`med-frequency-${i}`} value={med.frequency} onChange={e => updateBatchMed(i, 'frequency', e.target.value)} style={{ width: '100%', margin: 0 }}>
-                        <option value="once_daily">Once Daily</option>
-                        <option value="twice_daily">Twice Daily</option>
-                        <option value="thrice_daily">3x Daily</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="as_needed">As Needed</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select id={`med-timing-${i}`} value={med.timings[0]} onChange={e => updateBatchMed(i, 'timings', [e.target.value])} style={{ width: '100%', margin: 0 }}>
-                        {timingOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                      </select>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      {batchMeds.length > 1 && (
-                        <button type="button" onClick={() => removeRow(i)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--error)', padding: '4px' }}>
-                          <FiMinus size={16} />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div className="flex gap-sm" style={{ marginBottom: '16px' }}>
-              <button type="button" className="btn-ghost" onClick={addRow}><FiPlus size={12} /> Add Another Row</button>
-            </div>
-
-            <button type="submit" className="btn-primary" disabled={saving}>
-              {saving ? 'Saving...' : `💊 Save ${batchMeds.filter(m => m.name && m.dosage).length} Medicine(s)`}
-            </button>
-          </form>
-        </div>
-      )}
-
       {/* Empty state */}
-      {medicines.length === 0 && !showForm && (
+      {medicines.length === 0 && (
         <div className="card" style={{ textAlign: 'center', padding: '48px' }}>
-          <h3>💊 No Medicines Added</h3>
+          <h3>💊 No Medicines Found</h3>
           <p className="text-muted" style={{ margin: '12px 0 20px' }}>
-            Add your current medications or scan a prescription to auto-import medicines.
+            When a doctor prescribes you medication, it will auto-import and appear here securely.
           </p>
-          <button className="btn-primary" onClick={() => setShowForm(true)}><FiPlus /> Add Medicines</button>
         </div>
       )}
 
