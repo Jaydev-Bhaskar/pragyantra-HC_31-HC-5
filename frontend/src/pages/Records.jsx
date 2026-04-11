@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { demoRecords, isDemoUser } from '../utils/demoData';
 import API from '../utils/api';
-import { FiUpload, FiFile, FiCamera, FiChevronDown, FiChevronUp, FiExternalLink } from 'react-icons/fi';
+import { FiUpload, FiFile, FiCamera, FiChevronDown, FiChevronUp, FiExternalLink, FiTrash2 } from 'react-icons/fi';
 import './Pages.css';
 
 const Records = () => {
@@ -21,6 +21,17 @@ const Records = () => {
       setRecords(data || []);
     } catch (err) {
       console.log('Records fetch:', err.message);
+    }
+  };
+
+  const deleteRecord = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this record?')) return;
+    try {
+      await API.delete(`/records/${id}`);
+      setRecords(records.filter(r => r._id !== id));
+    } catch (err) {
+      console.log('Delete error:', err.message);
+      alert('Failed to delete record.');
     }
   };
 
@@ -208,7 +219,12 @@ const Records = () => {
                   {new Date(record.uploadedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </span>
               </div>
-              <div className="record-expand">{expanded === record._id ? <FiChevronUp /> : <FiChevronDown />}</div>
+              <div className="record-expand">
+                <button onClick={(e) => { e.stopPropagation(); deleteRecord(record._id); }} style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', marginRight: '12px' }} title="Delete Record">
+                  <FiTrash2 size={16} />
+                </button>
+                {expanded === record._id ? <FiChevronUp /> : <FiChevronDown />}
+              </div>
             </div>
 
             {expanded === record._id && (

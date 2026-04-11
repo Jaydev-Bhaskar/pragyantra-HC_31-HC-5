@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { demoFamilyMembers, isDemoUser } from '../utils/demoData';
 import API from '../utils/api';
-import { FiPlus, FiActivity, FiHeart, FiAlertTriangle, FiFileText, FiClock, FiSettings } from 'react-icons/fi';
+import { FiPlus, FiActivity, FiHeart, FiAlertTriangle, FiFileText, FiClock, FiSettings, FiTrash2 } from 'react-icons/fi';
 import './Pages.css';
 
 const FamilyVault = () => {
@@ -51,6 +51,16 @@ const FamilyVault = () => {
       }
     }
     setSaving(false);
+  };
+
+  const deleteFamilyMember = async (id) => {
+    if (!window.confirm("Are you sure you want to remove this family member? They will also be unlinked from your account mutually.")) return;
+    try {
+      await API.delete(`/auth/family/${id}`);
+      setMembers(members.filter(m => m._id !== id));
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to remove member.');
+    }
   };
 
   const handleAcceptRequest = async (id) => {
@@ -148,15 +158,20 @@ const FamilyVault = () => {
                     <p className="text-muted" style={{ margin: 0, fontSize: '0.85rem' }}>{member.healthId || '—'}</p>
                   </div>
                 </div>
-                {member.riskLevel && (
-                  <span style={{ 
-                    padding: '4px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold',
-                    backgroundColor: riskTheme.bg, color: riskTheme.color, display: 'flex', alignItems: 'center', gap: '4px'
-                  }}>
-                    {member.riskLevel === 'HIGH' && <FiAlertTriangle />}
-                    {member.riskLevel} RISK
-                  </span>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {member.riskLevel && (
+                    <span style={{ 
+                      padding: '4px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold',
+                      backgroundColor: riskTheme.bg, color: riskTheme.color, display: 'flex', alignItems: 'center', gap: '4px'
+                    }}>
+                      {member.riskLevel === 'HIGH' && <FiAlertTriangle />}
+                      {member.riskLevel} RISK
+                    </span>
+                  )}
+                  <button onClick={() => deleteFamilyMember(member._id)} style={{ background: 'none', border: 'none', color: '#d32f2f', cursor: 'pointer' }} title="Remove Member">
+                    <FiTrash2 size={18} />
+                  </button>
+                </div>
               </div>
 
               <div className="family-stats" style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #eee', paddingBottom: '12px' }}>

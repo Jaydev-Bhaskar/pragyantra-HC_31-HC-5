@@ -254,6 +254,30 @@ router.get('/family', protect, async (req, res) => {
     }
 });
 
+// Remove family member
+router.delete('/family/:id', protect, async (req, res) => {
+    try {
+        const targetId = req.params.id;
+        const user = await User.findById(req.user._id);
+        const targetUser = await User.findById(targetId);
+
+        if (!targetUser) {
+            return res.status(404).json({ message: 'Family member not found' });
+        }
+
+        // Mutual removal
+        user.familyMembers = user.familyMembers.filter(id => id.toString() !== targetId.toString());
+        targetUser.familyMembers = targetUser.familyMembers.filter(id => id.toString() !== req.user._id.toString());
+
+        await user.save();
+        await targetUser.save();
+
+        res.json({ message: 'Family member removed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Search doctors by code or name
 router.get('/doctors/search', protect, async (req, res) => {
     try {

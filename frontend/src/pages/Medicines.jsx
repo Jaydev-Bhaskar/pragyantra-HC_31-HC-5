@@ -339,10 +339,17 @@ const Medicines = () => {
           <div className="med-grid">
             {inactiveMeds.map(med => (
               <div key={med._id} className="card med-card" style={{ opacity: 0.5 }}>
-                <strong>{med.name}</strong> <span className="chip">{med.dosage}</span>
-                <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '8px' }}>
-                  {freqLabels[med.frequency] || med.frequency} · {med.prescribedBy || 'Self'}
-                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <strong>{med.name}</strong> <span className="chip">{med.dosage}</span>
+                    <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '8px' }}>
+                      {freqLabels[med.frequency] || med.frequency} · {med.prescribedBy || 'Self'}
+                    </p>
+                  </div>
+                  <button onClick={() => deleteMedicine(med._id)} style={{ background: 'none', border: 'none', color: 'var(--error)', cursor: 'pointer' }} title="Delete Medicine">
+                    <FiTrash2 size={16} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
