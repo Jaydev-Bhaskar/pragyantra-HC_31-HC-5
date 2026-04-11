@@ -12,6 +12,10 @@ import BlockchainLedger from './pages/BlockchainLedger';
 import HospitalDashboard from './pages/HospitalDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
 import ReminderNotification from './components/ReminderNotification';
+import Home from './pages/Home';
+import About from './pages/About';
+import Contact from './pages/Contact';
+
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -40,8 +44,12 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
+
 
       {/* Shared routes */}
       <Route path="/dashboard" element={<ProtectedRoute>{getDashboard()}</ProtectedRoute>} />
@@ -57,8 +65,9 @@ function AppRoutes() {
       <Route path="/doctor" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorDashboard /></ProtectedRoute>} />
       <Route path="/hospital" element={<ProtectedRoute allowedRoles={['hospital']}><HospitalDashboard /></ProtectedRoute>} />
 
-      <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
+
   );
 }
 

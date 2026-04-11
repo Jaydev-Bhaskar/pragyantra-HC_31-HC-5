@@ -59,23 +59,9 @@ const Login = () => {
   const handleDemoLogin = () => { login(demoUser); navigate('/dashboard'); };
 
   return (
-    <div className="auth-page">
-      <div className="auth-left">
-        <div className="auth-brand">
-          <span className="auth-logo">💚</span>
-          <h1>HealthVault AI</h1>
-          <p className="auth-tagline">Your Health. Your Data. Your Control.</p>
-        </div>
-        <div className="auth-features">
-          <div className="auth-feature"><span className="feature-icon">🔐</span><div><h4>Blockchain-Secured</h4><p>Your records are encrypted & tamper-proof</p></div></div>
-          <div className="auth-feature"><span className="feature-icon">🧠</span><div><h4>AI-Powered OCR</h4><p>Scan prescriptions, AI extracts & stores data</p></div></div>
-          <div className="auth-feature"><span className="feature-icon">💊</span><div><h4>Medicine Reminders</h4><p>Never miss a dose with smart scheduling</p></div></div>
-          <div className="auth-feature"><span className="feature-icon">🆘</span><div><h4>Emergency QR</h4><p>Life-saving data accessible in seconds</p></div></div>
-        </div>
-      </div>
+    <div className="auth-page centered">
+      <div className="auth-card card">
 
-      <div className="auth-right">
-        <div className="auth-card card">
           <h2>Welcome Back</h2>
           <p className="auth-subtitle">Sign in to access your health dashboard</p>
 
@@ -136,10 +122,10 @@ const Login = () => {
           <div className="auth-divider"><span>or</span></div>
           <button className="btn-secondary auth-btn" onClick={handleDemoLogin}>🚀 Quick Demo Login</button>
           <p className="auth-switch">Don't have an account? <Link to="/register">Create one</Link></p>
-        </div>
       </div>
     </div>
   );
 };
+
 
 export default Login;
