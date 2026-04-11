@@ -8,7 +8,9 @@ const accessPermissionSchema = new mongoose.Schema({
     doctorSpecialty: { type: String },
     hospital: { type: String },
     isActive: { type: Boolean, default: true },
-    accessType: { type: String, enum: ['full', 'limited', 'emergency'], default: 'limited' },
+    accessType: { type: String, enum: ['full', 'limited', 'emergency', 'custom'], default: 'limited' },
+    allowedRecords: [{ type: mongoose.Schema.Types.ObjectId, ref: 'HealthRecord' }],
+    allowMedicines: { type: Boolean, default: false },
     grantedAt: { type: Date, default: Date.now },
     expiresAt: { type: Date },
     accessLog: [{

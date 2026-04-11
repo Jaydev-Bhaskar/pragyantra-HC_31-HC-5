@@ -55,7 +55,15 @@ router.get('/patient/:patientId/records', protect, requireRole('doctor'), async 
             return res.status(403).json({ message: 'Your access to this patient has expired. Please ask the patient to renew access.' });
         }
 
-        const records = await HealthRecord.find({ patient: req.params.patientId }).sort({ uploadedAt: -1 });
+        let query = { patient: req.params.patientId };
+        
+        if (permission.accessType === 'custom') {
+            query._id = { $in: permission.allowedRecords || [] };
+        } else if (permission.accessType === 'limited') {
+            query.type = 'lab_report'; // Limited access restricts to lab reports
+        }
+
+        const records = await HealthRecord.find(query).sort({ uploadedAt: -1 });
 
         // Log record view to blockchain
         await BlockchainService.addBlock({
@@ -89,6 +97,10 @@ router.get('/patient/:patientId/medicines', protect, requireRole('doctor'), asyn
         });
         if (!permission) {
             return res.status(403).json({ message: 'No active access to this patient.' });
+        }
+
+        if (permission.accessType === 'limited' || (permission.accessType === 'custom' && !permission.allowMedicines)) {
+            return res.json([]); // Restricted from seeing full medicine list
         }
 
         const medicines = await Medicine.find({ patient: req.params.patientId }).sort({ createdAt: -1 });

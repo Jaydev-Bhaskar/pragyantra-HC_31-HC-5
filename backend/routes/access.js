@@ -10,7 +10,7 @@ const BlockchainService = require('../services/blockchain');
 // Grant access to a doctor (PATIENT ONLY)
 router.post('/grant', protect, requireRole('patient'), async (req, res) => {
     try {
-        const { doctorCode, doctorId, doctorName, doctorSpecialty, hospital, accessType, expiresAt } = req.body;
+        const { doctorCode, doctorId, doctorName, doctorSpecialty, hospital, accessType, expiresAt, allowedRecords, allowMedicines } = req.body;
 
         let doctor = null;
         // Try to find a real doctor by code
@@ -28,6 +28,8 @@ router.post('/grant', protect, requireRole('patient'), async (req, res) => {
             doctorCode: doctor ? doctor.doctorCode : (doctorCode || ''),
             hospital: doctor ? doctor.hospital : (hospital || ''),
             accessType: accessType || 'full',
+            allowedRecords: accessType === 'custom' ? allowedRecords : [],
+            allowMedicines: accessType === 'custom' ? !!allowMedicines : false,
             expiresAt
         });
 
@@ -138,6 +140,40 @@ router.put('/:id/toggle', protect, requireRole('patient'), async (req, res) => {
     }
 });
 
+// Edit access (PATIENT ONLY)
+router.put('/:id/edit', protect, requireRole('patient'), async (req, res) => {
+    try {
+        const { accessType, allowedRecords, allowMedicines } = req.body;
+        const permission = await AccessPermission.findById(req.params.id);
+        if (permission && permission.patient.toString() === req.user._id.toString()) {
+            permission.accessType = accessType;
+            permission.allowedRecords = accessType === 'custom' ? allowedRecords : [];
+            permission.allowMedicines = accessType === 'custom' ? !!allowMedicines : false;
+            
+            permission.accessLog.push({
+                action: 'ACCESS_EDITED',
+                timestamp: new Date()
+            });
+            await permission.save();
+
+            // Log to blockchain
+            await BlockchainService.addBlock({
+                action: 'ACCESS_EDITED',
+                patientId: req.user._id,
+                actorId: permission.doctor || req.user._id,
+                actorRole: 'patient',
+                details: `Patient edited ${accessType} access for Dr. ${permission.doctorName} (${permission.doctorCode})`
+            });
+
+            res.json(permission);
+        } else {
+            res.status(404).json({ message: 'Permission not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // Revoke access (PATIENT ONLY)
 router.delete('/:id', protect, requireRole('patient'), async (req, res) => {
     try {
@@ -188,9 +224,9 @@ router.get('/emergency-qr', protect, async (req, res) => {
             generatedAt: new Date().toISOString()
         };
         const qrDataUrl = await QRCode.toDataURL(JSON.stringify(emergencyData), {
-            width: 400,
-            margin: 2,
-            color: { dark: '#1b6968', light: '#ffffff' }
+            width: 800,
+            margin: 4,
+            color: { dark: '#000000', light: '#ffffff' }
         });
         res.json({ qrCode: qrDataUrl, data: emergencyData });
     } catch (error) {

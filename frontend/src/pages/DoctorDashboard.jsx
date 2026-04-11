@@ -138,7 +138,9 @@ const DoctorDashboard = () => {
             setScanMessage(`✅ Access granted for ${qrData.healthId}!`);
             fetchData(); // Refresh patient list
           } catch (err) {
-            setScanMessage('❌ Invalid QR Code format or network error.');
+            console.error('QR Scan Error:', err);
+            const apiError = err.response?.data?.message;
+            setScanMessage(`❌ ${apiError || err.message || 'Invalid QR Code format'}`);
           }
         } else {
           setScanMessage('❌ No QR code found in the image.');
